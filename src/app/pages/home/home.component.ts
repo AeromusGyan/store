@@ -19,6 +19,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   products: Array<Product> |undefined;
   sort = 'desc';
   count = '12';
+  
   productsSubscription: Subscription | undefined;
 
   constructor(private cartService:CartService, private storeService:StoreService) { }
@@ -32,19 +33,23 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getProducts();
   }
+
   getProducts(){
     this.storeService.getAllProducts(this.count,this.sort, this.category).subscribe((_products)=>{
       this.products = _products;
     })
   }
+
   onColumnsCountChange(colsNum:number):void{
   this.cols = colsNum;
   this.rowHeight = ROWS_HEIGHT[this.cols];
   }
+
   onShowCategory(newCategory:string):void{
     this.category = newCategory;
     this.getProducts();
   }
+  
   onAddtoCart(product:Product): void{
     this.cartService.addToCart({
       product:product.image,

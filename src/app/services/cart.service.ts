@@ -10,6 +10,7 @@ import { Cart, CartItem } from '../models/cart.model';
 export class CartService {
 
   cart = new BehaviorSubject<Cart>({ items: [] });
+
   constructor(private _snackbar: MatSnackBar) { }
 
 
@@ -26,18 +27,21 @@ export class CartService {
     }
     this.cart.next({ items });
     this._snackbar.open('1 item added to cart.', 'Ok', { duration: 3000 });
-    console.log(this.cart.value);
+    // console.log(this.cart.value);
+    
   }
+
   getTotal(items: Array<CartItem>): number {
     return items
       .map((item) => item.price * item.quantity)
       .reduce((prev, current) => prev + current, 0)
   }
+
   onClearCart(): void {
     this.cart.next({ items: [] });
     this._snackbar.open('Cart is cleared', 'Ok', { duration: 3000 });
-
   }
+
   removeFromCart(item: CartItem, update = true): Array<CartItem> {
     const filteredItems = this.cart.value.items
       .filter((_item) => _item.id !== item.id);
@@ -63,4 +67,5 @@ export class CartService {
     }
     this._snackbar.open('1 item removed from cart','Ok',{duration:3000})
   }
+
 }

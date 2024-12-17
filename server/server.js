@@ -15,32 +15,32 @@ app.post("/checkout", async (req, res, next) => {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             shipping_address_collection: { allowed_countries: ['IN', 'US'] },
-            shipping_options: [
-                {
-                    shipping_rate_data: {
-                        type: 'fixed_amount',
-                        fixed_amount: { amount: 0, currency: 'inr' },
-                        display_name: 'Free shipping',
-                        // tax_behavior: 'exclusive',
-                        // tax_code: 'txcd_92010001',
-                        delivery_estimate: {
-                            minimum: { unit: 'business_day', value: 5 },
-                            maximum: { unit: 'business_day', value: 7 },
-                        },
-                    },
-                },
-                {
-                    shipping_rate_data: {
-                        type: 'fixed_amount',
-                        fixed_amount: { amount: 1500, currency: 'inr' },
-                        display_name: 'Next day air',
-                        delivery_estimate: {
-                            minimum: { unit: 'business_day', value: 1 },
-                            maximum: { unit: 'business_day', value: 1 },
-                        },
-                    }
-                }
-            ],
+            // shipping_options: [
+            //     {
+            //         shipping_rate_data: {
+            //             type: 'fixed_amount',
+            //             fixed_amount: { amount: 0, currency: 'inr' },
+            //             display_name: 'Free shipping',
+            //             // tax_behavior: 'exclusive',
+            //             // tax_code: 'txcd_92010001',
+            //             // delivery_estimate: {
+            //             //     minimum: { unit: 'business_day', value: 5 },
+            //             //     maximum: { unit: 'business_day', value: 7 },
+            //             // },
+            //         },
+            //     },
+            //     {
+            //         shipping_rate_data: {
+            //             type: 'fixed_amount',
+            //             fixed_amount: { amount: 1500, currency: 'inr' },
+            //             display_name: 'Next day air',
+            //             delivery_estimate: {
+            //                 minimum: { unit: 'business_day', value: 1 },
+            //                 maximum: { unit: 'business_day', value: 1 },
+            //             },
+            //         }
+            //     }
+            // ],
             line_items: req.body.items.map((item) => ({
                 price_data: {
                     currency: 'inr',
@@ -54,12 +54,16 @@ app.post("/checkout", async (req, res, next) => {
             }
             )),
             mode: 'payment',
-            success_url: "http://localhost:4242/success.html",
-            cancel_url: "http://localhost:4242/cancel.html",
+            success_url: "https://stripe.sciaku.com/success.html",
+            cancel_url: "https://stripe.sciaku.com/cancel.html",
         });
-        res.status(200).json(session);
-        // console.log(session.url);
+        // Send a success response to your Angular frontend
+        res.status(200).json({ message: 'Payment successful', session });
+        console.log({ message: 'Payment successful', session });
     } catch (error) {
+        console.error(error);
+        // Send an error response to your Angular frontend
+        res.status(500).json({ error: 'Payment failed' });
         next(error);
     }
 });

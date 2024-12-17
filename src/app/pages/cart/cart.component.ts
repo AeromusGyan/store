@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { Cart, CartItem } from 'src/app/models/cart.model';
 import { CartService } from 'src/app/services/cart.service';
 import { loadStripe } from '@stripe/stripe-js';
+import { Stripe } from '@stripe/stripe-js';
+
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.view.html',
@@ -10,6 +12,8 @@ import { loadStripe } from '@stripe/stripe-js';
   ]
 })
 export class CartComponent implements OnInit {
+
+  stripe: string = 'pk_live_51M1qVWSIkk0x5fD01z5ceus0In9Fa79naeWY6RdUh9Nhe7ZN9WdU0Ro9K0wqYby2UHYgM4Ubvjwh4fhSZXCe3ZCP00jNAMRB8H';
 
   cart: Cart = {items: [{
     product: 'https://via.placeholder.com/150',
@@ -33,7 +37,9 @@ export class CartComponent implements OnInit {
     id: 1,
   },
 ]};
+
   dataSource: Array<CartItem> = [];
+
   displayedColumns: Array<string> = [
     'product',
     'name',
@@ -69,13 +75,14 @@ export class CartComponent implements OnInit {
   }
 
   onCheckout(): void{
-    this.http.post('http://localhost:4242/checkout',{
+    this.http.post('https://stripe.sciaku.com/checkout',{
       items: this.cart.items
     }).subscribe(async (res:any) =>{
-      let stripe = await loadStripe('pk_live_51M1qVWSIkk0x5fD01z5ceus0In9Fa79naeWY6RdUh9Nhe7ZN9WdU0Ro9K0wqYby2UHYgM4Ubvjwh4fhSZXCe3ZCP00jNAMRB8H');
+      let stripe = await loadStripe(this.stripe);
       stripe?.redirectToCheckout({
         sessionId: res.id
       })
+      console.log(res);
     })
   }
 }
